@@ -1,3 +1,0 @@
-"""
-Harvest API modules package.
-"""
