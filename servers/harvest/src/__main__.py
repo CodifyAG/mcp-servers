@@ -1,9 +1,10 @@
-import os
 import json
-from typing import List, Dict, Optional
+import os
+from typing import Dict, List, Optional
+
+import requests
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
-import requests
 
 # Load environment variables
 load_dotenv()
@@ -16,8 +17,14 @@ USER_AGENT = "Smart Harvest Tool"
 # Initialize FastMCP
 mcp = FastMCP("Smart Harvest Tool")
 
+
 # Utility function to make Harvest API requests
-def harvest_api_request(method: str, endpoint: str, data: Optional[Dict] = None, params: Optional[Dict] = None) -> Dict:
+def harvest_api_request(
+    method: str,
+    endpoint: str,
+    data: Optional[Dict] = None,
+    params: Optional[Dict] = None,
+) -> Dict:
     """
     Makes a request to the Harvest API.
 
@@ -40,7 +47,9 @@ def harvest_api_request(method: str, endpoint: str, data: Optional[Dict] = None,
     }
 
     try:
-        response = requests.request(method, url, headers=headers, json=data, params=params)
+        response = requests.request(
+            method, url, headers=headers, json=data, params=params
+        )
         response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
         return response.json()
     except requests.exceptions.RequestException as e:
@@ -253,7 +262,9 @@ def delete_time_entry_external_reference(time_entry_id: int) -> Dict:
     Returns:
         A dictionary indicating success or failure.
     """
-    response = harvest_api_request("DELETE", f"/time_entries/{time_entry_id}/external_reference")
+    response = harvest_api_request(
+        "DELETE", f"/time_entries/{time_entry_id}/external_reference"
+    )
     return response
 
 
@@ -300,6 +311,7 @@ def stop_time_entry(time_entry_id: int) -> Dict:
     """
     response = harvest_api_request("PATCH", f"/time_entries/{time_entry_id}/stop")
     return response
+
 
 @mcp.tool()
 def list_clients(
@@ -423,6 +435,7 @@ def delete_client(client_id: int) -> Dict:
     """
     response = harvest_api_request("DELETE", f"/clients/{client_id}")
     return response
+
 
 @mcp.tool()
 def list_projects(
@@ -645,6 +658,7 @@ def delete_project(project_id: int) -> Dict:
     """
     response = harvest_api_request("DELETE", f"/projects/{project_id}")
     return response
+
 
 @mcp.tool()
 def get_clients_time_report(
