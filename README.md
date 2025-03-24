@@ -45,22 +45,6 @@ This project implements a [Model Context Protocol](https://modelcontextprotocol.
 | Get Tasks Time Report | ✅ |
 | Get Team Time Report | ✅ |
 
-## Project Structure
-
-The project is organized into modules by resource type:
-
-```
-src/
-├── api/
-│   ├── __init__.py
-│   ├── core.py           # Core API request functionality
-│   ├── time_entries.py   # Time entries endpoints
-│   ├── clients.py        # Client management endpoints
-│   ├── projects.py       # Project management endpoints
-│   └── reports.py        # Time reporting endpoints
-└── server.py             # MCP server implementation
-```
-
 ## Setup
 
 ### Dependencies
