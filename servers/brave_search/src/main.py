@@ -1,6 +1,7 @@
 import json
 from typing import Any
 import os
+from urllib.parse import urlencode
 import httpx
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
@@ -28,7 +29,12 @@ HEADERS = {
 @mcp.tool()
 async def brave_web_search(query: str, count: int = 10, offset: int = 0) -> str:
     """Performs a web search using the Brave Search API."""
-    url = f"{BRAVE_API_BASE}/web/search?q={query}&count={min(count, 20)}&offset={offset}"
+    params = {
+        "q": query,
+        "count": min(count, 20),
+        "offset": offset
+    }
+    url = f"{BRAVE_API_BASE}/web/search?{urlencode(params)}"
     data = await make_brave_request(url)
     
     if not data or "web" not in data or "results" not in data["web"]:
