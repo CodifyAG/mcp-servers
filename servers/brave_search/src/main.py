@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 import logging
 
+from models import WebSearchRequest
+
 # Load environment variables
 load_dotenv()
 
@@ -29,11 +31,8 @@ HEADERS = {
 @mcp.tool()
 async def brave_web_search(query: str, count: int = 10, offset: int = 0) -> str:
     """Performs a web search using the Brave Search API."""
-    params = {
-        "q": query,
-        "count": min(count, 20),
-        "offset": offset
-    }
+    request = WebSearchRequest(q=query, count=count, offset=offset)
+    params = request.model_dump()
     url = f"{BRAVE_API_BASE}/web/search?{urlencode(params)}"
     data = await make_brave_request(url)
     
@@ -43,10 +42,13 @@ async def brave_web_search(query: str, count: int = 10, offset: int = 0) -> str:
     results = data["web"]["results"]
     return "\n---\n".join([f"Title: {r['title']}\nDescription: {r['description']}\nURL: {r['url']}" for r in results])
 
+# WIP: This tool is not tested, no API Permissions for local search
 @mcp.tool()
 async def brave_local_search(query: str, count: int = 5) -> str:
     """Searches for local businesses using Brave's Local Search API."""
     url = f"{BRAVE_API_BASE}/web/search?q={query}&search_lang=en&result_filter=locations&count={min(count, 20)}"
+    print(url)
+    logging.info(f"Local search URL: {url}")
     data = await make_brave_request(url)
     
     if not data or "locations" not in data or "results" not in data["locations"]:
