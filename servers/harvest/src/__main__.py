@@ -788,6 +788,10 @@ def get_team_time_report(
     return response
 
 
-if __name__ == "__main__":
+def main():
     print("Start server")
     mcp.run(transport="stdio")
+
+
+if __name__ == "__main__":
+    main()

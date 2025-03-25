@@ -17,6 +17,9 @@ dependencies = [
     "mcp-servers-harvest"
 ]
 
+[project.scripts]
+harvest = "servers.harvest.src.__main__:main"
+
 [tool.uv.workspace]
 members = ["servers/harvest"]
 
