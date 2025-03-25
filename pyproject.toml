@@ -13,10 +13,6 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-dependencies = [
-    "mcp-servers-harvest"
-]
-
 [project.scripts]
 harvest = "servers.harvest.src"
 
