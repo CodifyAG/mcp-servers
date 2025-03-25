@@ -13,8 +13,12 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+dependencies = [
+    "mcp-servers-harvest"
+]
+
 [project.scripts]
-harvest = "servers.harvest.src"
+harvest = "servers.harvest.src:main"
 
 [tool.uv.workspace]
 members = ["servers/harvest"]
