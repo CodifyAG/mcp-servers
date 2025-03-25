@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [tool.uv.workspace]
-members = ["servers/harvest"]
+members = ["servers/harvest", "servers/brave_search"]
 
 [tool.uv.sources]
 mcp-servers-harvest = { workspace = true }
