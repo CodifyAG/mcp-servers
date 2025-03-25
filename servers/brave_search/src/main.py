@@ -1,8 +1,10 @@
+import json
 from typing import Any
 import os
 import httpx
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
+import logging
 
 # Load environment variables
 load_dotenv()
@@ -10,6 +12,9 @@ load_dotenv()
 BRAVE_API_KEY = os.getenv("BRAVE_API_KEY")
 if not BRAVE_API_KEY:
     raise RuntimeError("Error: BRAVE_API_KEY environment variable is required")
+
+# Initialize Logging
+logging.basicConfig(level=logging.INFO)
 
 # Initialize FastMCP server
 mcp = FastMCP("brave_search")
@@ -49,11 +54,20 @@ async def brave_local_search(query: str, count: int = 5) -> str:
 
 async def make_brave_request(url: str) -> Any:
     """Helper function to make requests to the Brave API."""
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url, headers=HEADERS)
-        if response.status_code != 200:
-            return None
-        return response.json()
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, headers=HEADERS, timeout=10.0)
+            response.raise_for_status()  # Raise exception for 4XX/5XX status codes
+            return response.json()
+    except httpx.HTTPStatusError as e:
+        logging.error(f"HTTP error occurred: {str(e)}, Status code: {e.response.status_code}")
+        return {"error": f"API error: {e.response.status_code}"}
+    except httpx.RequestError as e:
+        logging.error(f"Request error occurred: {str(e)}")
+        return {"error": "Failed to connect to search API"}
+    except json.JSONDecodeError:
+        logging.error("Failed to decode JSON response")
+        return {"error": "Invalid response format"}
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
