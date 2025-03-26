@@ -17,38 +17,41 @@ This project implements a [Model Context Protocol](https://modelcontextprotocol.
 
 ### Prerequisites
 
-- Python 3.9 or higher
+- `uv`
 - Harvest account with API access
 - Harvest API credentials (Account ID and Access Token)
 
-### Installation
+### Running the Server
 
-1. Clone the repository:
-```bash
-git clone https://github.com/your-organization/mcp-servers.git
-cd mcp-servers
-```
+Set up environment variables:
 
-2. Set up environment variables:
 ```bash
 export HARVEST_ACCOUNT_ID=your-harvest-account-id
 export HARVEST_ACCESS_TOKEN=your-harvest-access-token
 ```
 
 Alternatively, create a `.env` file in the server directory:
-```
+
+```bash
 HARVEST_ACCOUNT_ID=your-harvest-account-id
 HARVEST_ACCESS_TOKEN=your-harvest-access-token
 ```
 
-### Running the Server
+If you have `uvx` installed you can run the server directly.
 
 ```bash
-cd servers/harvest
-python -m src.server
+uvx --from git+https://github.com/CodifyAG/mcp-servers harvest
 ```
 
-### Configuration with Claude Desktop
+But for development you might like to run it 
+
+```bash
+git clone https://github.com/your-organization/mcp-servers.git
+cd mcp-servers
+uv run python -m servers.harvest.src
+```
+
+### Running the Server with Claude Desktop
 
 Add to your `claude_desktop_config.json`:
 
@@ -56,9 +59,8 @@ Add to your `claude_desktop_config.json`:
 {
   "mcpServers": {
     "mcp-server-harvest": {
-      "command": "python",
-      "args": ["-m", "servers.harvest.src.server"],
-      "cwd": "/path/to/mcp-servers",
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/CodifyAG/mcp-servers", "harvest"],
       "env": {
         "HARVEST_ACCOUNT_ID": "your-harvest-account-id",
         "HARVEST_ACCESS_TOKEN": "your-harvest-access-token"
@@ -68,7 +70,7 @@ Add to your `claude_desktop_config.json`:
 }
 ```
 
-### Configuration with Core AI
+### Running the Server with Core AI
 
 TBD
 
