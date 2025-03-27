@@ -35,13 +35,42 @@ async def brave_web_search(query: str, count: int = 10, offset: int = 0) -> str:
     request = WebSearchRequest(q=query, count=count, offset=offset)
     params = request.model_dump()
     url = f"{BRAVE_API_BASE}/web/search?{urlencode(params)}"
+    
+    logging.info(f"Performing search with query: {query}, count: {count}, offset: {offset}")
     data = await make_brave_request(url)
     
-    if not data or "web" not in data or "results" not in data["web"]:
-        return "No search results found."
+    # Check for errors first
+    if "error" in data:
+        logging.warning(f"Search error for query '{query}': {data['error']}")
+        return f"Search error: {data['error']}"
     
+    # Check for valid response structure
+    if "web" not in data:
+        logging.warning(f"Unexpected response format for query '{query}': 'web' key not found")
+        return "Error: Unexpected response format from search API"
+    
+    if "results" not in data["web"] or not data["web"]["results"]:
+        logging.info(f"No results found for query: '{query}'")
+        return "No search results found for your query."
+    
+    # Process successful results
     results = data["web"]["results"]
-    return "\n---\n".join([f"Title: {r['title']}\nDescription: {r['description']}\nURL: {r['url']}" for r in results])
+    logging.info(f"Found {len(results)} results for query: '{query}'")
+    
+    formatted_results = []
+    for i, result in enumerate(results, 1):
+        title = result.get("title", "No title")
+        url = result.get("url", "No URL")
+        description = result.get("description", "No description")
+        
+        formatted_result = f"[Result {i}]\n"
+        formatted_result += f"Title: {title}\n"
+        formatted_result += f"URL: {url}\n"
+        formatted_result += f"Description: {description}"
+        
+        formatted_results.append(formatted_result)
+    
+    return "\n\n".join(formatted_results)
 
 @mcp.tool()
 async def fetch_website(url: str) -> str:
