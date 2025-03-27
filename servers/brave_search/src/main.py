@@ -60,24 +60,32 @@ async def fetch_website(url: str) -> str:
     text = '\n'.join(chunk for chunk in chunks if chunk)
     return text
 
-
-
-async def make_brave_request(url: str) -> Any:
-    """Helper function to make requests to the Brave API."""
+async def make_brave_request(url: str) -> dict[str, Any]:
+    """Helper function to make requests to the Brave API with better error handling."""
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=HEADERS, timeout=10.0)
-            response.raise_for_status()  # Raise exception for 4XX/5XX status codes
+            response.raise_for_status()
             return response.json()
     except httpx.HTTPStatusError as e:
-        logging.error(f"HTTP error occurred: {str(e)}, Status code: {e.response.status_code}")
-        return {"error": f"API error: {e.response.status_code}"}
+        status_code = e.response.status_code
+        logging.error(f"HTTP error {status_code} for URL {url}: {str(e)}")
+        # Return structured error for different status codes
+        if status_code == 401:
+            return {"error": "API authentication failed - check your API key"}
+        elif status_code == 429:
+            return {"error": "Rate limit exceeded - try again later"}
+        else:
+            return {"error": f"API error: {status_code}"}
     except httpx.RequestError as e:
-        logging.error(f"Request error occurred: {str(e)}")
+        logging.error(f"Request error for URL {url}: {str(e)}")
         return {"error": "Failed to connect to search API"}
-    except json.JSONDecodeError:
-        logging.error("Failed to decode JSON response")
+    except json.JSONDecodeError as e:
+        logging.error(f"Failed to decode JSON response: {str(e)}")
         return {"error": "Invalid response format"}
+    except Exception as e:
+        logging.error(f"Unexpected error making API request: {str(e)}")
+        return {"error": "An unexpected error occurred"}
 
 if __name__ == "__main__":
     mcp.run(transport="stdio")
