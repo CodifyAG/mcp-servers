@@ -2,6 +2,7 @@ import json
 from typing import Any
 import os
 from urllib.parse import urlencode
+from bs4 import BeautifulSoup
 import httpx
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
@@ -42,23 +43,24 @@ async def brave_web_search(query: str, count: int = 10, offset: int = 0) -> str:
     results = data["web"]["results"]
     return "\n---\n".join([f"Title: {r['title']}\nDescription: {r['description']}\nURL: {r['url']}" for r in results])
 
-# WIP: This tool is not tested, no API Permissions for local search
 @mcp.tool()
-async def brave_local_search(query: str, count: int = 5) -> str:
-    """Searches for local businesses using Brave's Local Search API."""
-    url = f"{BRAVE_API_BASE}/web/search?q={query}&search_lang=en&result_filter=locations&count={min(count, 20)}"
-    print(url)
-    logging.info(f"Local search URL: {url}")
-    data = await make_brave_request(url)
+async def fetch_website(url: str) -> str:
+    async with httpx.AsyncClient() as client:
+        response = await client.get(url)
+        if response.status_code != 200:
+            print(f"Failed to fetch page. Status code: {response.status_code}")
+            return None
     
-    if not data or "locations" not in data or "results" not in data["locations"]:
-        return "No local results found."
-    
-    location_ids = [r["id"] for r in data["locations"]["results"] if "id" in r]
-    if not location_ids:
-        return await brave_web_search(query, count)
-    
-    return f"Found {len(location_ids)} locations for query: {query}"
+    soup = BeautifulSoup(response, 'html.parser')
+    for s in soup(['script', 'style']):
+        s.decompose()
+    text = soup.get_text() 
+    lines = (line.strip() for line in text.splitlines())
+    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+    text = '\n'.join(chunk for chunk in chunks if chunk)
+    return text
+
+
 
 async def make_brave_request(url: str) -> Any:
     """Helper function to make requests to the Brave API."""

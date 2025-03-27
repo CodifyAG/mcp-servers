@@ -14,7 +14,9 @@ classifiers = [
 ]
 
 dependencies = [
-    "mcp-servers-harvest"
+    "beautifulsoup4>=4.13.3",
+    "mcp-servers-harvest",
+    "mcp[cli]>=1.5.0",
 ]
 
 [tool.uv.workspace]
