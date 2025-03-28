@@ -14,7 +14,6 @@ classifiers = [
 ]
 
 dependencies = [
-    "beautifulsoup4>=4.13.3",
     "mcp-servers-harvest",
     "mcp[cli]>=1.5.0",
 ]
@@ -24,3 +23,5 @@ members = ["servers/harvest", "servers/brave_search"]
 
 [tool.uv.sources]
 mcp-servers-harvest = { workspace = true }
+
+

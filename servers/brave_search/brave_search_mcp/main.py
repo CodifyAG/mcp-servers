@@ -1,14 +1,14 @@
 import json
 from typing import Any
 import os
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse
 from bs4 import BeautifulSoup
 import httpx
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 import logging
 
-from models import WebSearchRequest
+from brave_search_mcp.models import WebSearchRequest
 
 # Load environment variables
 load_dotenv()
@@ -74,25 +74,56 @@ async def brave_web_search(query: str, count: int = 10, offset: int = 0) -> str:
 
 @mcp.tool()
 async def fetch_website(url: str) -> str:
-    async with httpx.AsyncClient() as client:
-        response = await client.get(url)
-        if response.status_code != 200:
-            print(f"Failed to fetch page. Status code: {response.status_code}")
-            return None
+    """Fetches content from a website and returns cleaned text.
     
-    soup = BeautifulSoup(response, 'html.parser')
-    for s in soup(['script', 'style']):
-        s.decompose()
-    text = soup.get_text() 
-    lines = (line.strip() for line in text.splitlines())
-    chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
-    text = '\n'.join(chunk for chunk in chunks if chunk)
-    return text
+    Args:
+        url: The URL of the website to fetch
+        
+    Returns:
+        Clean text content from the website
+    """
+    if not is_valid_url(url):
+        return "Invalid URL format"
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url, follow_redirects=True, timeout=10.0)
+            response.raise_for_status()
+            
+            html_content = response.text
+            soup = BeautifulSoup(html_content, 'html.parser')
+            
+            # Remove script and style elements
+            for element in soup(['script', 'style']):
+                element.decompose()
+                
+            # Get clean text
+            text = soup.get_text(separator='\n')
+            
+            # Clean up whitespace
+            lines = (line.strip() for line in text.splitlines())
+            chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
+            text = '\n'.join(chunk for chunk in chunks if chunk)
+            
+            # Truncate if too long
+            if len(text) > 10000:
+                text = text[:10000] + "...\n[Content truncated due to length]"
+                
+            return text
+    except httpx.HTTPStatusError as e:
+        logging.error(f"HTTP error {e.response.status_code} for URL {url}: {str(e)}")
+        return f"Error fetching website: HTTP {e.response.status_code}"
+    except httpx.RequestError as e:
+        logging.error(f"Request error for URL {url}: {str(e)}")
+        return f"Error connecting to website: {str(e)}"
+    except Exception as e:
+        logging.error(f"Unexpected error fetching website: {str(e)}")
+        return f"Error processing website content: {str(e)}"
 
 async def make_brave_request(url: str) -> dict[str, Any]:
     """Helper function to make requests to the Brave API with better error handling."""
     try:
         async with httpx.AsyncClient() as client:
+            logging.info(f"Making request to Brave API: {url}")
             response = await client.get(url, headers=HEADERS, timeout=10.0)
             response.raise_for_status()
             return response.json()
@@ -116,5 +147,16 @@ async def make_brave_request(url: str) -> dict[str, Any]:
         logging.error(f"Unexpected error making API request: {str(e)}")
         return {"error": "An unexpected error occurred"}
 
-if __name__ == "__main__":
+def is_valid_url(url: str) -> bool:
+    """Check if the URL is valid and uses http or https."""
+    try:
+        result = urlparse(url)
+        return all([result.scheme in ['http', 'https'], result.netloc])
+    except ValueError:
+        return False
+
+def main():
+    """Main function to run the MCP server."""
+    # This function is not strictly necessary, as the server is started in the if __name__ block
     mcp.run(transport="stdio")
+    

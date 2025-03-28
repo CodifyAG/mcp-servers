@@ -1,4 +1,3 @@
-# In models.py
 from pydantic import BaseModel, Field, field_validator
 
 MAX_RESULTS_PER_REQUEST = 20
