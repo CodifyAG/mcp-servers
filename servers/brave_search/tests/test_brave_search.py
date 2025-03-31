@@ -75,7 +75,6 @@ async def test_make_brave_request_http_error():
     with patch("httpx.AsyncClient.get", return_value=mock_response):
         result = await make_brave_request("https://api.example.com/test")
 
-    print("this is the result", result)
     assert "error" in result
     assert "API authentication failed" in result["error"]
 
@@ -98,8 +97,6 @@ async def test_brave_web_search_success():
         "brave_search_mcp.main.make_brave_request", return_value=WEB_SEARCH_RESPONSE
     ):
         result = await brave_web_search("test query")
-
-    print(result)
 
     assert "Test Result 1" in result
     assert "Test Result 2" in result
