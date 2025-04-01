@@ -1,5 +1,5 @@
 [project]
-name = "brave-search"
+name = "mcp-servers-brave-search"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
