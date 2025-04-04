@@ -1,0 +1,32 @@
+[project]
+name = "mcp-servers-slack"
+version = "0.1.0"
+description = "Smart Slack Tool for managing Workspace with Slack API"
+authors = [
+    {name = "Codify AG", email = "timo.weiser@codify.ch"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.28.0",
+    "python-dotenv>=0.20.0",
+    "mcp>=0.1.0",
+    "slack-sdk>=3.35.0",
+    "pydantic>=2.10.6"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "mypy>=0.950"
+]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+
+[tool.pytest]
+testpaths = ["tests"]

@@ -15,16 +15,19 @@ classifiers = [
 
 dependencies = [
     "mcp-servers-harvest",
-    "mcp-servers-brave-search
+    "mcp-servers-brave-search",
+    "mcp-servers-slack",
+    "ruff"
 ]
 
 [project.scripts]
 harvest = "servers.harvest.src.__main__:main"
 
 [tool.uv.workspace]
-members = ["servers/harvest", "servers/brave_search"]
+members = ["servers/harvest", "servers/brave_search", "servers/slack"]
 
 [tool.uv.sources]
 mcp-servers-harvest = { workspace = true }
 mcp-servers-brave-search = { workspace = true }
+mcp-servers-slack = { workspace = true }
 
