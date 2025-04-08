@@ -14,14 +14,17 @@ classifiers = [
 ]
 
 dependencies = [
-    "mcp-servers-harvest"
+    "mcp-servers-harvest",
+    "mcp-servers-brave-search
 ]
 
 [project.scripts]
 harvest = "servers.harvest.src.__main__:main"
 
 [tool.uv.workspace]
-members = ["servers/harvest"]
+members = ["servers/harvest", "servers/brave_search"]
 
 [tool.uv.sources]
 mcp-servers-harvest = { workspace = true }
+mcp-servers-brave-search = { workspace = true }
+

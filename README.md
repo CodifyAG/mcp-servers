@@ -4,10 +4,11 @@ A central repository for multiple [Model Context Protocol (MCP)](https://modelco
 
 ## Available Servers
 
-| Server | Description | Status |
-|--------|-------------|--------|
-| [Harvest](/servers/harvest) | Time tracking and project management | ✅ Active |
-| Binance | Cryptocurrency exchange API | 🚧 Planned |
+| Server                                 | Description                          | Status     |
+| -------------------------------------- | ------------------------------------ | ---------- |
+| [Harvest](/servers/harvest)            | Time tracking and project management | ✅ Active  |
+| [Brave Search](/servers/brave_search/) | Time tracking and project management | ✅ Active  |
+| Binance                                | Cryptocurrency exchange API          | 🚧 Planned |
 
 ## Repository Structure
 
@@ -27,6 +28,7 @@ mcp-servers/
 Each server has its own documentation and setup instructions. Please refer to the specific server's README for details:
 
 - [Harvest MCP Server](/servers/harvest)
+- [Brave Search Server](/servers/brave_search/)
 - Binance MCP Server (Coming soon)
 
 ## Contributing
