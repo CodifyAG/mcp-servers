@@ -6,6 +6,11 @@ import json
 import pytest
 from unittest.mock import patch
 
+from servers.slack.slack_mcp.models import (
+    GetUsersArgs,
+    PostMessageArgs,
+    ReplyToThreadArgs,
+)
 from slack_mcp.server import ListChannelsArgs
 
 
@@ -75,8 +80,9 @@ async def test_slack_post_message(mock_slack_client):
     }
     mock_slack_client.post_message.return_value = mock_response
 
+    args = PostMessageArgs(channel_id="C12345", text="Test message")
     # Call the tool function
-    result = await slack_post_message(channel_id="C12345", text="Test message")
+    result = await slack_post_message(args)
 
     # Verify the result
     assert isinstance(result, str)
@@ -99,10 +105,11 @@ async def test_slack_reply_to_thread(mock_slack_client):
     }
     mock_slack_client.post_reply.return_value = mock_response
 
-    # Call the tool function
-    result = await slack_reply_to_thread(
+    args = ReplyToThreadArgs(
         channel_id="C12345", thread_ts="1234567890.123456", text="Test reply"
     )
+    # Call the tool function
+    result = await slack_reply_to_thread(args)
 
     # Verify the result
     assert isinstance(result, str)
@@ -131,8 +138,9 @@ async def test_slack_get_users(mock_slack_client):
     # For this test, we need to directly import the tool function
     from slack_mcp.server import slack_get_users
 
+    args = GetUsersArgs(limit=10)
     # Call the tool function
-    result = await slack_get_users(limit=10)
+    result = await slack_get_users(args)
 
     # Verify the result
     assert isinstance(result, str)
