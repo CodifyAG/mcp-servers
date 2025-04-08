@@ -22,6 +22,7 @@ dependencies = [
 
 [project.scripts]
 harvest = "servers.harvest.src.__main__:main"
+slack = "servers.slack_mcp.server:main"
 
 [tool.uv.workspace]
 members = ["servers/harvest", "servers/brave_search", "servers/slack"]
