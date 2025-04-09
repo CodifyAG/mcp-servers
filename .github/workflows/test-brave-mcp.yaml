@@ -1,0 +1,15 @@
+name: Test Brave Search Server
+
+on:
+  push:
+    paths:
+      - "servers/brave_search/**"
+  pull_request:
+    paths:
+      - "servers/brave_search/**"
+
+jobs:
+  test:
+    uses: ./.github/workflows/run-server-tests.yml
+    with:
+      server_path: servers/brave_search
