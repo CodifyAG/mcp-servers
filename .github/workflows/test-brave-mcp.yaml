@@ -13,3 +13,4 @@ jobs:
     uses: ./.github/workflows/run-server-tests.yml
     with:
       server_path: servers/brave_search
+      code_path: brave_search_mcp
