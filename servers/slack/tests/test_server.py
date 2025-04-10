@@ -6,7 +6,7 @@ import json
 import pytest
 from unittest.mock import patch
 
-from servers.slack.slack_mcp.models import (
+from slack_mcp.models import (
     GetUsersArgs,
     PostMessageArgs,
     ReplyToThreadArgs,
