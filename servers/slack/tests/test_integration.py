@@ -9,13 +9,12 @@ import json
 import pytest
 from unittest.mock import patch, MagicMock
 
-from servers.slack.slack_mcp.models import (
+from slack_mcp.models import (
     GetUsersArgs,
     ListChannelsArgs,
     PostMessageArgs,
 )
 from slack_mcp.client import SlackClient
-from slack_mcp.server import mcp
 
 
 @pytest.fixture
