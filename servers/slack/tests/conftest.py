@@ -155,3 +155,9 @@ def pytest_sessionstart(session):
 
     patcher = patch("slack_mcp.client.SlackClient._verify_auth", return_value=None)
     patcher.start()
+
+
+def pytest_sessionfinish(session, exitstatus):
+    from unittest.mock import patch
+
+    patch.stopall()
