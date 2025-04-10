@@ -15,7 +15,7 @@ classifiers = [
 
 dependencies = [
     "mcp-servers-harvest",
-    "mcp-servers-brave-search
+    "mcp-servers-brave-search"
 ]
 
 [project.scripts]
