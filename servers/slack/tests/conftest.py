@@ -6,6 +6,7 @@ import pytest
 from unittest.mock import patch
 from slack_sdk.web.slack_response import SlackResponse
 from dotenv import load_dotenv
+import os
 
 # Load environment variables from .env file for testing
 load_dotenv()
@@ -148,7 +149,9 @@ def sample_message_data():
 
 
 def pytest_sessionstart(session):
-    import os
-
+    """Set environment variables and patch SlackClient._verify_auth early."""
     os.environ["SLACK_BOT_TOKEN"] = "xoxb-test-token"
     os.environ["SLACK_TEAM_ID"] = "T12345"
+
+    patcher = patch("slack_mcp.client.SlackClient._verify_auth", return_value=None)
+    patcher.start()
