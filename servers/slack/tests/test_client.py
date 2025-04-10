@@ -158,3 +158,32 @@ def test_add_reaction(mock_slack_client):
     mock_slack_client.client.reactions_add.assert_called_once_with(
         channel="C12345", timestamp="1234567890.123456", name="thumbsup"
     )
+
+
+def test_schedule_message(mock_slack_client):
+    """Test scheduling a message."""
+    mock_scheduled = {
+        "ok": True,
+        "scheduled_message_id": "Q12345678",
+        "post_at": 1700000000,
+        "channel": "C12345",
+    }
+    mock_response = SlackResponse(
+        client=mock_slack_client.client,
+        http_verb="POST",
+        api_url="chat.scheduleMessage",
+        req_args={},
+        data=mock_scheduled,
+        headers={},
+        status_code=200,
+    )
+    mock_slack_client.client.chat_scheduleMessage.return_value = mock_response
+
+    # Call the method
+    result = mock_slack_client.schedule_message("C12345", "Scheduled text", 1700000000)
+
+    # Verify results
+    assert result == mock_scheduled
+    mock_slack_client.client.chat_scheduleMessage.assert_called_once_with(
+        channel="C12345", text="Scheduled text", post_at=1700000000
+    )
