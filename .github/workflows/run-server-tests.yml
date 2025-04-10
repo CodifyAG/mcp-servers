@@ -6,6 +6,9 @@ on:
       server_path:
         required: true
         type: string
+      code_path:
+        required: true
+        type: string
 
 jobs:
   ruff:
