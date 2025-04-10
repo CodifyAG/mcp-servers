@@ -6,7 +6,6 @@ import pytest
 from unittest.mock import patch
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web.slack_response import SlackResponse
-
 from slack_mcp.client import SlackClient
 
 
@@ -26,6 +25,12 @@ def mock_slack_client():
         # Replace the actual WebClient with our mock
         client.client = mock_instance
         yield client
+
+
+@pytest.fixture(autouse=True)
+def inject_mock_slack_client(mock_slack_client):
+    with patch("slack_mcp.server.slack_client", mock_slack_client):
+        yield
 
 
 def test_get_channels(mock_slack_client):
