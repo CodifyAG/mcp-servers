@@ -144,6 +144,35 @@ def test_post_message_error(mock_slack_client):
     assert "Error" in result["error"]
 
 
+def test_post_reply(mock_slack_client):
+    """Test posting a threaded reply."""
+    mock_reply = {
+        "ok": True,
+        "channel": "C12345",
+        "ts": "1234567890.123456",
+        "message": {"text": "Thread reply"},
+    }
+    mock_response = SlackResponse(
+        client=mock_slack_client.client,
+        http_verb="POST",
+        api_url="chat.postMessage",
+        req_args={},
+        data=mock_reply,
+        headers={},
+        status_code=200,
+    )
+    mock_slack_client.client.chat_postMessage.return_value = mock_response
+
+    # Call the method
+    result = mock_slack_client.post_reply("C12345", "1234567890.000000", "Thread reply")
+
+    # Verify results
+    assert result == mock_reply
+    mock_slack_client.client.chat_postMessage.assert_called_once_with(
+        channel="C12345", thread_ts="1234567890.000000", text="Thread reply"
+    )
+
+
 def test_get_users(mock_slack_client):
     """Test getting users list."""
     # Setup mock response
