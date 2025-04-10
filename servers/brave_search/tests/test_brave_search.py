@@ -1,6 +1,6 @@
 import pytest
 import httpx
-from unittest.mock import MagicMock, Mock, patch, AsyncMock
+from unittest.mock import MagicMock, patch, AsyncMock
 from brave_search_mcp.main import (
     brave_web_search,
     fetch_website,
