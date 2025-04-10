@@ -59,6 +59,46 @@ def test_get_channels(mock_slack_client):
     )
 
 
+def test_get_channel_history(mock_slack_client):
+    """Test fetching channel history."""
+    mock_history = {
+        "ok": True,
+        "messages": [
+            {
+                "type": "message",
+                "user": "U12345",
+                "text": "Hello!",
+                "ts": "1234567890.000100",
+            },
+            {
+                "type": "message",
+                "user": "U67890",
+                "text": "Hi!",
+                "ts": "1234567890.000200",
+            },
+        ],
+    }
+    mock_response = SlackResponse(
+        client=mock_slack_client.client,
+        http_verb="GET",
+        api_url="conversations.history",
+        req_args={},
+        data=mock_history,
+        headers={},
+        status_code=200,
+    )
+    mock_slack_client.client.conversations_history.return_value = mock_response
+
+    # Call the method
+    result = mock_slack_client.get_channel_history("C12345", limit=2)
+
+    # Verify results
+    assert result == mock_history
+    mock_slack_client.client.conversations_history.assert_called_once_with(
+        channel="C12345", limit=2
+    )
+
+
 def test_post_message(mock_slack_client):
     """Test posting a message."""
     # Setup mock response
