@@ -11,13 +11,13 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-@pytest.fixture(scope="session", autouse=True)
-def mock_env_vars():
-    """Automatically set fake env vars for all tests before anything else."""
-    with patch.dict(
-        "os.environ", {"SLACK_BOT_TOKEN": "xoxb-test-token", "SLACK_TEAM_ID": "T12345"}
-    ):
-        yield
+# @pytest.fixture(scope="session", autouse=True)
+# def mock_env_vars():
+#     """Automatically set fake env vars for all tests before anything else."""
+#     with patch.dict(
+#         "os.environ", {"SLACK_BOT_TOKEN": "xoxb-test-token", "SLACK_TEAM_ID": "T12345"}
+#     ):
+#         yield
 
 
 @pytest.fixture
@@ -145,3 +145,10 @@ def sample_message_data():
             "ts": "1234567890.123456",
         },
     }
+
+
+def pytest_sessionstart(session):
+    import os
+
+    os.environ["SLACK_BOT_TOKEN"] = "xoxb-test-token"
+    os.environ["SLACK_TEAM_ID"] = "T12345"
