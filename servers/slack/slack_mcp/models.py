@@ -3,7 +3,7 @@ Pydantic models for Slack API data structures.
 """
 
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 
 
 class SlackUser(BaseModel):
@@ -16,9 +16,9 @@ class SlackUser(BaseModel):
     is_admin: Optional[bool] = Field(None, description="Whether the user is an admin")
     profile: Optional[Dict[str, Any]] = Field(None, description="User profile data")
 
-    @validator("id")
+    @field_validator("id")
+    @classmethod
     def validate_user_id(cls, v):
-        """Validate that the user ID starts with 'U'."""
         if not v.startswith("U"):
             raise ValueError("User ID must start with 'U'")
         return v
@@ -38,9 +38,9 @@ class SlackChannel(BaseModel):
     topic: Optional[Dict[str, Any]] = Field(None, description="Channel topic")
     purpose: Optional[Dict[str, Any]] = Field(None, description="Channel purpose")
 
-    @validator("id")
+    @field_validator("id")
+    @classmethod
     def validate_channel_id(cls, v):
-        """Validate that the channel ID starts with 'C'."""
         if not v.startswith("C"):
             raise ValueError("Channel ID must start with 'C'")
         return v
@@ -62,16 +62,11 @@ class SlackMessage(BaseModel):
         None, description="Message reactions"
     )
 
-    @validator("user", "bot_id")
-    def either_user_or_bot(cls, v, values):
-        """Validate that at least one of user or bot_id is present."""
-        if (
-            v is None
-            and "user" in values
-            and "bot_id" in values
-            and values["user"] is None
-            and values["bot_id"] is None
-        ):
+    @field_validator("user", "bot_id", mode="before")
+    @classmethod
+    def either_user_or_bot(cls, v, info):
+        values = info.data
+        if v is None and values.get("user") is None and values.get("bot_id") is None:
             raise ValueError("Either user or bot_id must be present")
         return v
 
@@ -92,9 +87,9 @@ class SlackScheduledMessage(BaseModel):
     post_at: int = Field(..., description="Unix timestamp when message will be sent")
     text: str = Field(..., description="Message text")
 
-    @validator("id")
+    @field_validator("id")
+    @classmethod
     def validate_scheduled_message_id(cls, v):
-        """Validate that the scheduled message ID is properly formatted."""
         if not v.startswith("Q"):
             raise ValueError("Scheduled message ID must start with 'Q'")
         return v
@@ -284,9 +279,9 @@ class SlackConfig(BaseModel):
     cache_ttl: int = Field(300, description="Cache TTL in seconds")
     max_retries: int = Field(3, description="Maximum number of retries for API calls")
 
-    @validator("bot_token")
+    @field_validator("bot_token")
+    @classmethod
     def validate_bot_token(cls, v):
-        """Validate that the bot token has the correct format."""
         if not v.startswith("xoxb-"):
             raise ValueError("Bot token must start with 'xoxb-'")
         return v
