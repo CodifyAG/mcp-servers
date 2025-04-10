@@ -11,9 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-@pytest.fixture
+@pytest.fixture(scope="session", autouse=True)
 def mock_env_vars():
-    """Fixture to mock environment variables."""
+    """Automatically set fake env vars for all tests before anything else."""
     with patch.dict(
         "os.environ", {"SLACK_BOT_TOKEN": "xoxb-test-token", "SLACK_TEAM_ID": "T12345"}
     ):
