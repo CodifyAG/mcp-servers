@@ -7,8 +7,8 @@ A central repository for multiple [Model Context Protocol (MCP)](https://modelco
 | Server                                 | Description                          | Status     |
 | -------------------------------------- | ------------------------------------ | ---------- |
 | [Harvest](/servers/harvest)            | Time tracking and project management | ✅ Active  |
-| [Brave Search](/servers/brave_search/) | Time tracking and project management | ✅ Active  |
-| Binance                                | Cryptocurrency exchange API          | 🚧 Planned |
+| [Brave Search](/servers/brave_search/) | Web Search                           | ✅ Active  |
+| Slack                                  | Team Communication                   | 🚧 Planned |
 
 ## Repository Structure
 
@@ -19,7 +19,7 @@ mcp-servers/
 │   │   ├── src/              # Server implementation
 │   │   ├── tests/            # Server tests
 │   │   └── README.md         # Server documentation
-│   └── binance/              # Binance MCP server (planned)
+│   └── slack/                # Slack MCP server (planned)
 └── examples/                 # Example usage for all servers
 ```
 
@@ -29,7 +29,7 @@ Each server has its own documentation and setup instructions. Please refer to th
 
 - [Harvest MCP Server](/servers/harvest)
 - [Brave Search Server](/servers/brave_search/)
-- Binance MCP Server (Coming soon)
+- Slack MCP Server (Coming soon)
 
 ## Contributing
 
